@@ -1,0 +1,72 @@
+# This .gitignore file should be placed at the root of your Unity project directory
+
+# Ignore all hidden files and directories (Unix/Linux)
+.*
+!.gitignore
+
+# Ignore Unity specific files
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+[Ss]ysInfo/
+*.pidb
+*.booproj
+*.svd
+*.userprefs
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.pidb.meta
+
+# Ignore OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Ignore Visual Studio Code specific files
+.vscode/
+
+# Ignore JetBrains Rider specific files
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Ignore build artifacts
+Builds/
+build/
+bin/
+obj/
+
+# Ignore crash reports, log files, packed files
+CrashReports/
+Logs/
+MemoryCaptures/
+*.stacktrace
+
+# Ignore node_modules directory if using npm
+node_modules/
+
+# Ignore npm-debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Uncomment if you have Unity Collaborate installed
+# <Your project name>.collab/
