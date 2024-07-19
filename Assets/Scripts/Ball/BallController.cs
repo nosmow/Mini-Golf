@@ -4,24 +4,22 @@ using UnityEngine;
 
 public class BallController : MonoBehaviour
 {
-    public LineRenderer lineRenderer;
-    private Vector3 starMousePos;
+    private Vector3 startMousePos;
     private Vector3 endMousePos;
     private Rigidbody rb;
     public float forceMultiplier = 10f;
     public float maxForce = 100f;
     public float minVelocity = 0.05f;
     
+
+    private LineGenerator lineGenerator;
+
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        //rb.angularDrag = 1f;
-        //rb.drag = 1f;
-        rb.interpolation = RigidbodyInterpolation.Interpolate;
+        lineGenerator = FindAnyObjectByType<LineGenerator>();
 
-        lineRenderer.positionCount = 2;
-        lineRenderer.SetPosition(0, Vector3.zero);
-        lineRenderer.SetPosition(1, Vector3.zero);
+        rb = GetComponent<Rigidbody>();
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
     }
 
     void Update()
@@ -33,38 +31,59 @@ public class BallController : MonoBehaviour
     {
         if (rb.velocity.magnitude <= minVelocity)
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                starMousePos = Input.mousePosition;
-                starMousePos.z = Camera.main.transform.position.y;
-                starMousePos = Camera.main.ScreenToWorldPoint(starMousePos);
-                starMousePos.y = transform.position.y;
-            }
-
-            Vector3 direction = starMousePos - endMousePos;
-            float force = Mathf.Clamp(direction.magnitude * forceMultiplier, 0, maxForce);
-
-            if (Input.GetMouseButton(0))
-            {
-                endMousePos = Input.mousePosition;
-                endMousePos.z = Camera.main.transform.position.y;
-                endMousePos = Camera.main.ScreenToWorldPoint(endMousePos);
-                endMousePos.y = transform.position.y;
-
-
-                lineRenderer.SetPosition(0, transform.position);
-                lineRenderer.SetPosition(1, transform.position + direction);
-            }
-
-            if (Input.GetMouseButtonUp(0))
-            {
-                rb.AddForce(direction.normalized * force, ForceMode.Impulse);
-            }
+            HandleMouseInput();
         }
         else
         {
-            lineRenderer.SetPosition(0, Vector3.zero);
-            lineRenderer.SetPosition(1, Vector3.zero);
+            lineGenerator.ResetLine();
         }
+    }
+
+    void HandleMouseInput()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            SetStartMousePos();
+        }
+
+        if (Input.GetMouseButton(0))
+        {
+            UpdateLineRenderer();
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            ApplyForce();
+            lineGenerator.ResetLine();
+        }
+    }
+
+    void SetStartMousePos()
+    {
+        startMousePos = GetMouseWorldPosition();
+        startMousePos.y = transform.position.y;
+    }
+
+    Vector3 GetMouseWorldPosition()
+    {
+        Vector3 mousePos = Input.mousePosition;
+        mousePos.z = Camera.main.transform.position.y;
+        return Camera.main.ScreenToWorldPoint(mousePos);
+    }
+
+    void UpdateLineRenderer()
+    {
+        endMousePos = GetMouseWorldPosition();
+        endMousePos.y = transform.position.y;
+
+        Vector3 direction = startMousePos - endMousePos;
+        lineGenerator.UpdateLine(transform.position, direction);
+    }
+
+    void ApplyForce()
+    {
+        Vector3 direction = startMousePos - endMousePos;
+        float force = Mathf.Clamp(direction.magnitude * forceMultiplier, 0, maxForce);
+        rb.AddForce(direction.normalized * force, ForceMode.Impulse);
     }
 }
